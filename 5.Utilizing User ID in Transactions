@@ -1,0 +1,15 @@
+When generating transactions in a wallet or service, the following steps can be used:
+
+1. User Input:
+  The user inputs an easy-to-remember User ID instead of the SymID for the account to which they want to send the transaction.
+  
+2. Retrieve SymID:
+   The wallet or service uses the citizen_getSymIDByUserID API to retrieve the SymID that is matched 1:1 with the provided User ID.
+
+3.Create Transaction:
+  Use the retrieved SymID to create the transaction message.  
+  
+4. Transaction Submission:
+  Submit the transaction message. The process remains identical to the existing transaction structure, with the only addition being the step to retrieve the SymID.
+  
+By following this process, users can conveniently utilize User IDs while maintaining compatibility with the existing transaction system.

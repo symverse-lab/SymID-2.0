@@ -1,0 +1,19 @@
+The signed message for a Symverse Citizen is the Sha3 hash of the RLP-encoded citizen data, represented in code as follows:
+
+    Sig = sign(sha3(rlp.encode(citizen.raw)), privateKey)
+
+Existing Symverse Citizen Signature Process:
+1. Create a citizen data structure that includes the following 16 fields:
+    Publisher, Recipient, AccountNonce, SymId, AKeyPubH, VFlag, Country, Status, Credit, Role, RefCode, WriteTime, Extra, chainID, 0, 0
+2. RLP encode this citizen data to serialize it.
+3. Calculate the Sha3 hash of this serialized message.
+4. Sign the hash using the account's private key with ECDSA.
+5. Insert the calculated r and s values of the ECDSA signature into the citizen message.
+
+Changed Symverse Citizen Signature Process:
+1. Create a citizen data structure that includes the following 18 fields:
+   Publisher, Recipient, AccountNonce, SymId, AKeyPubH, VFlag, Country, Status, Credit, Role, RefCode, WriteTime, Extra, userID, userGroup, chainID, 0, 0
+2. RLP encode this citizen data to serialize it.
+3. Calculate the Sha3 hash of this serialized message.
+4. Sign the hash using the account's private key with ECDSA.
+5. Insert the calculated r and s values of the ECDSA signature into the citizen message.

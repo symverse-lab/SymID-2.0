@@ -1,0 +1,6 @@
+The User ID must be composed only of alphabetic characters and numbers.
+The length must be between 3 and 20 characters.
+The first character must be an alphabetic character.
+User IDs are case-insensitive.
+Duplicate User IDs are not allowed.
+User IDs can be changed.

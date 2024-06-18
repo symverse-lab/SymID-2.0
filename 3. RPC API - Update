@@ -1,0 +1,140 @@
+RPC API Update
+
+3.1. citizen_sendCitizen (Update)
+
+The message call in order to create new citizen or change citizen information.
+Setting a User ID can only be done through the CA account of the account for which the User ID is being set.
+
+# Parameters
+
+Object - the Symverse identifier & account properties.
+
+    from : DATA , 10 Bytes - the address of the CA server that creates SymID.
+    to : DATA , 10 Bytes - (optional) the address creation transaction is directed to.
+    nonce : QUANTITY - (optional) integer of a nonce.
+    symId : DATA , 10 Bytes - hexadecimal SymID identifying an account.
+    aKeyPubH : DATA , 20 Bytes - lower bytes of hashed public key.
+    vFlag : DATA , 1 Byte - (optional ,default:0) veriﬁcation strength of an account represented by bits.
+    country : DATA , 1 Byte - (optional, default:0) country code.
+    status : DATA , 1 Byte - (optional, default:1, active) account status of an account. (0x1: Active, 0x2: Locked, 0x3: Marked, 0x4: Revoked)
+    credit : DATA , 1 Byte - (optional, default:0) credit rating of an account (0~15)
+    role : DATA , 2 Bytes - (optional, default: 0x1) account role (0x1: general, 0xf0f0: Master CA, 0xf0f1: CA, 0xf0f2: Oracle)
+    refCode : DATA , 4 Bytes - (optional) issuer's reference code.
+    UserId : string , 3~20 Bytes -  (optional) user identity of an account.
+    UserGroup : string , 3~20 Bytes -  (optional) user group of an account. 
+
+Note : See Symverse identifier & account properties in detail.
+
+      params:[{
+          "from": "0x00000000000000000901",
+          "to": "0x00000000000000000000",
+          "vFlag":"0x0",
+          "symId":"0x00010000000000010003",
+          "aKeyPubH":"0x484E0b5D12913CeC0B4e942828F6168E9F464A09",
+          "country": "0x0",
+          "status": "0x1",
+          "credit": "0xf",
+          "role": "0x1"
+          "userId": "testUserID"
+      }]
+
+      Returns
+      DATA, 32 Bytes - hash of a citizen.
+
+<Example>
+
+      //Request
+      curl -X POST -H "Content-Type: application/json; charset=utf-8" --data '{"jsonrpc":"2.0","method":"citizen_sendCitizen","params":[{see above}],"id":100}' <http://127.0.0.1:8545>
+      //Result
+      {"jsonrpc":"2.0","id":100,"result":"0x4841852ea5d07be83b6ffc087619664b4609405c286c7fe325492c16ca53f2c5"}
+
+
+3.2. citizen_getSymIDByUserID (Add)
+
+The message call in order to retrieve the SymID that is matched 1:1 with the UserID.
+
+# Parameters
+
+1. DATA, n Bytes - User ID.
+2. QUANTITY|TAG - integer block number, or the string "latest", "earliest" or "pending", see the <default block parameter>
+
+    params:[
+        "testUserID",
+        "latest" // state at the latest block
+    ]
+    Returns
+    DATA, 10 Bytes - the SymID that is matched 1:1 with the UserID.
+
+# Example
+
+      //Request
+      curl -X POST -H "Content-Type: application/json; charset=utf-8" --data '{"jsonrpc":"2.0","method":"getSymIDByUserID","params":[{see above}],"id":100}' <http://127.0.0.1:8545>
+      //Result
+      {"jsonrpc":"2.0","id":100,"result":"0x00010000000000010003"}
+
+
+3.3. citizen_getCitizenBySymID (변경)
+
+Returns the information of a citizen by the SymID.
+
+Parameters
+1. DATA, 10Bytes - SymID.
+2. QUANTITY|TAG - Integer of a block number, or the string "earliest" or "latest"
+
+Returns
+Object , N Bytes - For existing citizen information or null when it was failed
+
+ - ca: DATA, 10 Bytes - the issuer's SymID of the citizen.
+  
+ - nonce: QUANTITY - integer of a nonce.
+  
+ - aKeyPubH : DATA, 20 Bytes - lower bytes of hashed public key.
+  
+ - vFlag : DATA , 1 Byte - veriﬁcation strength of an account represented by bits.
+  
+ - country: DATA, 1 Byte - country code.
+  
+ - status : DATA , 1 Byte - account status of an account. (0x1: Active, 0x2: Locked, 0x3: Marked, 0x4: Revoked)
+  
+ - credit : DATA, 1 Byte - account credit rating(0~15)
+  
+ - role : DATA , 2 Bytes - account role (0x1: general, 0xf0f0: Master CA, 0xf0f1: CA, 0xf0f2: Oracle)
+  
+ - refCode: DATA, 4 Bytes - issuer's reference code.
+  
+ - writeTime : QUANTITY - the unix timestamp for the citizen requested time.
+  
+ - userId: DATA, 3~20 Bytes - user identity of an account.
+  
+ - userGroup: DATA, 3~20 Bytes - user group of an account.
+
+Example
+    
+    
+    //Request
+    curl -X POST -H "Content-Type: application/json; charset=utf-8" --data '{"jsonrpc":"2.0","method":"citizen_getCitizenBySymID", "params":["0x00000000000000001001","latest"],"id":100}' <http://127.0.0.1:8545>
+    //Result
+    {
+        "jsonrpc": "2.0",
+        "id": 100,
+        "result": {
+            "aKeyPubH": "0xf6231e6649cdf3aa13002b659026dba31156036f",
+            "ca": "0x00000000000000000801",
+            "citizenIndex": 0,
+            "country": "0x0",
+            "credit": "0x0",
+            "nonce": "0x0",
+            "refCode": "0x0",
+            "role": "0xf0f1",
+            "status": "0x1",
+            "userGroup": "testUserGroup5",
+            "userId": "testUserID18",
+            "vFlag": "0x0",
+            "writeTime": "0x0"
+        }
+    }
+
+
+3.4. 기타
+
+All APIs that respond with Citizen information now include UserId and UserGroup. Refer to '3.3. citizen_getCitizenBySymID's Returns' for the response values.
